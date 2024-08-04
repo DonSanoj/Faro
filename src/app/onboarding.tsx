@@ -56,7 +56,9 @@ export default function Onboarding() {
 
                 <View style={styles.stepIndicatorContainer}>
                     {onboardingSteps.map((step, index) => (
-                        <View style={[styles.stepIndicator, { backgroundColor: index === screenIndex ? `${data.iconColor}` : '#302E38' }]} />
+                        <View
+                            key={index}
+                            style={[styles.stepIndicator, { backgroundColor: index === screenIndex ? `${data.iconColor}` : '#302E38' }]} />
                     ))}
                 </View>
 
@@ -80,7 +82,7 @@ export default function Onboarding() {
             <View style={styles.buttonRow}>
 
                 <Text
-                    style={[styles.buttonText, {color: 'grey'}]}
+                    style={[styles.buttonText, { color: 'grey' }]}
                     onPress={endOnboarding}
                 >
                     Skip

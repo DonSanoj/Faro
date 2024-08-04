@@ -1,13 +1,26 @@
+import { FontAwesome5, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import HomeTopButton from "../components/HomeTopButton";
 
 export default function HomeScreen() {
     return (
         <SafeAreaView style={styles.page}>
+            <StatusBar style='light' />
             <Stack.Screen options={{ headerShown: false }} />
 
-            <Text>Home screen</Text>
+            <View style={styles.pageContent}>
+
+                <HomeTopButton />
+
+                <View>
+                    
+                </View>
+
+            </View>
         </SafeAreaView>
     );
 }
@@ -18,4 +31,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
     },
-})
+    pageContent: {
+        padding: 2,
+        flex: 1,
+    },
+});
