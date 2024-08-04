@@ -2,11 +2,16 @@ import { FontAwesome5, Ionicons, MaterialCommunityIcons } from "@expo/vector-ico
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import HomeTopButton from "../components/HomeTopButton";
+import Community from "../components/Community";
+import Rentals from "../components/Rentals";
 
 export default function HomeScreen() {
+
+    const [activeButton, setActiveButton] = useState('community');
+
     return (
         <SafeAreaView style={styles.page}>
             <StatusBar style='light' />
@@ -14,11 +19,12 @@ export default function HomeScreen() {
 
             <View style={styles.pageContent}>
 
-                <HomeTopButton />
+                <HomeTopButton activeButton={activeButton} setActiveButton={setActiveButton} />
 
-                <View>
-                    
-                </View>
+                <ScrollView>
+                    {activeButton === 'community' && <Community />}
+                    {activeButton === 'rentals' && <Rentals />}
+                </ScrollView>
 
             </View>
         </SafeAreaView>

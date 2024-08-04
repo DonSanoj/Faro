@@ -5,9 +5,9 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function HomeTopButton() {
+export default function HomeTopButton({ activeButton, setActiveButton }: { activeButton: string, setActiveButton: React.Dispatch<React.SetStateAction<string>> }) {
 
-    const [activeButton, setActiveButton] = useState<string>('community');
+    // const [activeButton, setActiveButton] = useState<string>('community');
 
     return (
 
