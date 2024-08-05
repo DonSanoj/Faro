@@ -9,7 +9,7 @@ export default function Home() {
             <StatusBar style='light' />
             <Stack.Screen options={{ headerShown: false }} />
 
-            <Link href={"/home"} asChild style={styles.continueBtn}>
+            <Link href={"/onboarding"} asChild style={styles.continueBtn}>
                 <Text>Continue</Text>
             </Link>
         </SafeAreaView>

@@ -1,6 +1,6 @@
 import { AntDesign, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View, Share, Modal } from "react-native";
 
 const postDetails = [
     {
@@ -64,6 +64,9 @@ export default function Community() {
 
     const [posts, setPosts] = useState(postDetails);
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedPost, setSelectedPost] = useState<any>(null);
+
     const hidePost = (index: number) => {
         setPosts(posts.filter((_, i) => i !== index));
     };
@@ -81,11 +84,50 @@ export default function Community() {
         setPosts(updatedPosts);
     }
 
-    const handleShare = (index: number) => {
-        const updatedPosts = [...posts];
-        updatedPosts[index].shares += 1;
-        setPosts(updatedPosts);
-    }
+    // const handleShare = (index: number) => {
+    // const updatedPosts = [...posts];
+    // updatedPosts[index].shares += 1;
+    // setPosts(updatedPosts);
+    // }
+
+    const showModal = (post: any) => {
+        setSelectedPost(post);
+        setIsModalVisible(true);
+    };
+
+    const hideModal = () => {
+        setIsModalVisible(false);
+        setSelectedPost(null);
+    };
+
+    const handleShare = async () => {
+        if (!selectedPost) return;
+        try {
+            // Use Share API or any custom logic for sharing
+            const result = await Share.share({
+                message: `Check out this post from ${selectedPost.profileName}: ${selectedPost.caption} ${selectedPost.content}`,
+            });
+
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                    const updatedPosts = posts.map(p =>
+                        p === selectedPost ? { ...p, shares: p.shares + 1 } : p
+                    );
+                    setPosts(updatedPosts);
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error: any) {
+            alert(error.message);
+        } finally {
+            hideModal();
+        }
+    };
+
 
     return (
         <View style={styles.content}>
@@ -145,7 +187,7 @@ export default function Community() {
                                 </View>
                             </Pressable>
 
-                            <Pressable onPress={() => handleShare(index)}>
+                            <Pressable onPress={() => showModal(post)}>
                                 <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
                                     <MaterialCommunityIcons name="share-outline" size={24} color="#B4B4B8" />
                                     <Text style={styles.actionBtnText}>Share</Text>
@@ -158,6 +200,33 @@ export default function Community() {
                 );
 
             })}
+
+            <Modal
+                visible={isModalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={hideModal}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Share this Post</Text>
+                        <Text style={styles.modalText}>{selectedPost?.caption}</Text>
+                        <View style={styles.postContent}>
+                            {selectedPost?.content.startsWith('http') ? (
+                                <Image source={{ uri: selectedPost?.content }} style={styles.postContentImage} />
+                            ) : (
+                                <Text style={styles.postContentText}>{selectedPost?.content}</Text>
+                            )}
+                        </View>
+                        <Pressable style={styles.modalButton} onPress={handleShare}>
+                            <Text style={styles.modalButtonText}>Share</Text>
+                        </Pressable>
+                        <Pressable style={styles.modalButton} onPress={hideModal}>
+                            <Text style={[styles.modalButtonText, {color: 'red'}]}>Cancel</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
 
         </View >
     );
@@ -226,5 +295,42 @@ const styles = StyleSheet.create({
         color: '#B4B4B8',
         fontSize: 15,
         fontWeight: '600',
-    }
+    },
+
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: '#333',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+        alignItems: 'center',
+    },
+    modalTitle: {
+        color: '#fff',
+        fontSize: 18,
+        marginBottom: 10,
+    },
+    modalText: {
+        color: '#fff',
+        fontSize: 16,
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    modalButton: {
+        backgroundColor: '#555',
+        padding: 10,
+        borderRadius: 10,
+        marginVertical: 5,
+        width: '100%',
+        alignItems: 'center',
+    },
+    modalButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
 })
