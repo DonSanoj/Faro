@@ -7,10 +7,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import HomeTopButton from "../components/HomeTopButton";
 import Community from "../components/Community";
 import Rentals from "../components/Rentals";
+import FooterButton from "../components/FooterButton";
 
 export default function HomeScreen() {
 
     const [activeButton, setActiveButton] = useState('community');
+    const [activeFooterBtn, setActiveFooterBtn] = useState('Home');
+
+    const handleFooterPress = (button: any) => {
+        setActiveFooterBtn(button);
+        if (button === 'Home') {
+            setActiveButton('community');
+        }
+    }
 
     return (
         <SafeAreaView style={styles.page}>
@@ -27,6 +36,9 @@ export default function HomeScreen() {
                 </ScrollView>
 
             </View>
+
+            <FooterButton activeFooterBtn={activeFooterBtn} setActiveFooterBtn={handleFooterPress} />
+
         </SafeAreaView>
     );
 }

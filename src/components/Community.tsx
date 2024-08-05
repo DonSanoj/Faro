@@ -9,6 +9,10 @@ const postDetails = [
         postTime: "12h",
         caption: "Excited to be here with you all!",
         content: "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        likes: 0,
+        liked: false,
+        comments: 0,
+        shares: 0,
     },
     {
         profileImg: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -16,6 +20,10 @@ const postDetails = [
         postTime: "12h",
         caption: "Let's share and grow together!",
         content: "Post content goes here",
+        likes: 0,
+        liked: false,
+        comments: 0,
+        shares: 0,
     },
     {
         profileImg: "https://images.pexels.com/photos/943084/pexels-photo-943084.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -23,6 +31,10 @@ const postDetails = [
         postTime: "12h",
         caption: "Happy to connect with everyone!",
         content: "https://images.pexels.com/photos/593172/pexels-photo-593172.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        likes: 0,
+        liked: false,
+        comments: 0,
+        shares: 0,
     },
     {
         profileImg: "https://images.pexels.com/photos/1310522/pexels-photo-1310522.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -30,6 +42,10 @@ const postDetails = [
         postTime: "12h",
         caption: "Greetings, fellow members!",
         content: "Post content goes here",
+        likes: 0,
+        liked: false,
+        comments: 0,
+        shares: 0,
     },
     {
         profileImg: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -37,22 +53,44 @@ const postDetails = [
         postTime: "12h",
         caption: "Thrilled to join this community!",
         content: "https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        likes: 0,
+        liked: false,
+        comments: 0,
+        shares: 0,
     },
 ];
 
 export default function Community() {
 
-    const [hiddenPosts, setHiddenPosts] = useState<number[]>([]);
+    const [posts, setPosts] = useState(postDetails);
 
     const hidePost = (index: number) => {
-        setHiddenPosts([...hiddenPosts, index]);
+        setPosts(posts.filter((_, i) => i !== index));
     };
+
+    const handleLike = (index: number) => {
+        const updatedPosts = [...posts];
+        updatedPosts[index].likes += updatedPosts[index].liked ? -1 : 1;
+        updatedPosts[index].liked = !updatedPosts[index].liked;
+        setPosts(updatedPosts);
+    };
+
+    const handleComment = (index: number) => {
+        const updatedPosts = [...posts];
+        updatedPosts[index].comments += 1;
+        setPosts(updatedPosts);
+    }
+
+    const handleShare = (index: number) => {
+        const updatedPosts = [...posts];
+        updatedPosts[index].shares += 1;
+        setPosts(updatedPosts);
+    }
 
     return (
         <View style={styles.content}>
 
-            {postDetails.map((post, index) => {
-                if (hiddenPosts.includes(index)) return null;
+            {posts.map((post, index) => {
 
                 return (
                     <View key={index} style={{ marginBottom: 30, borderBottomWidth: 2, borderBottomColor: 'grey' }}>
@@ -84,27 +122,35 @@ export default function Community() {
                         </View>
 
                         <View style={styles.actionInfo}>
-                            <Text style={styles.actionInfoText}>12 Likes</Text>
+                            <Text style={styles.actionInfoText}>{post.likes} Likes</Text>
                             <View style={{ flexDirection: 'row', gap: 15 }}>
-                                <Text style={styles.actionInfoText}>3 Comments</Text>
-                                <Text style={styles.actionInfoText}>2 Shares</Text>
+                                <Text style={styles.actionInfoText}>{post.comments} Comments</Text>
+                                <Text style={styles.actionInfoText}>{post.shares} Shares</Text>
                             </View>
                         </View>
 
                         <View style={styles.actionBtn}>
 
-                            <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-                                <AntDesign name="like2" size={24} color="#B4B4B8" />
-                                <Text style={styles.actionBtnText}>Like</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-                                <FontAwesome name="comment-o" size={24} color="#B4B4B8" />
-                                <Text style={styles.actionBtnText}>Comment</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-                                <MaterialCommunityIcons name="share-outline" size={24} color="#B4B4B8" />
-                                <Text style={styles.actionBtnText}>Share</Text>
-                            </View>
+                            <Pressable onPress={() => handleLike(index)}>
+                                <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                                    <AntDesign name="like1" size={24} color={post.liked ? "blue" : "#B4B4B8"} />
+                                    <Text style={styles.actionBtnText}>Like</Text>
+                                </View>
+                            </Pressable>
+
+                            <Pressable onPress={() => handleComment(index)}>
+                                <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                                    <FontAwesome name="comment-o" size={24} color="#B4B4B8" />
+                                    <Text style={styles.actionBtnText}>Comment</Text>
+                                </View>
+                            </Pressable>
+
+                            <Pressable onPress={() => handleShare(index)}>
+                                <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                                    <MaterialCommunityIcons name="share-outline" size={24} color="#B4B4B8" />
+                                    <Text style={styles.actionBtnText}>Share</Text>
+                                </View>
+                            </Pressable>
 
                         </View>
 
