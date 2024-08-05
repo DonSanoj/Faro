@@ -8,6 +8,9 @@ import HomeTopButton from "../components/HomeTopButton";
 import Community from "../components/Community";
 import Rentals from "../components/Rentals";
 import FooterButton from "../components/FooterButton";
+import Map from "../components/map";
+import Message from "../components/Message";
+import Account from "../components/Account";
 
 export default function HomeScreen() {
 
@@ -18,6 +21,12 @@ export default function HomeScreen() {
         setActiveFooterBtn(button);
         if (button === 'Home') {
             setActiveButton('community');
+        } else if (button === 'Map') {
+            setActiveButton('map');
+        } else if (button === 'Message') {
+            setActiveButton('message');
+        } else if (button === 'Account') {
+            setActiveButton('account');
         }
     }
 
@@ -28,11 +37,16 @@ export default function HomeScreen() {
 
             <View style={styles.pageContent}>
 
-                <HomeTopButton activeButton={activeButton} setActiveButton={setActiveButton} />
+                {activeButton !== 'map' && activeButton !== 'message' && activeButton !== 'account' && (
+                    <HomeTopButton activeButton={activeButton} setActiveButton={setActiveButton} />)
+                }
 
                 <ScrollView>
                     {activeButton === 'community' && <Community />}
                     {activeButton === 'rentals' && <Rentals />}
+                    {activeButton === 'map' && <Map />}
+                    {activeButton === 'message' && <Message />}
+                    {activeButton === 'account' && <Account />}
                 </ScrollView>
 
             </View>
