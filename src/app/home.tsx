@@ -8,7 +8,7 @@ import HomeTopButton from "../components/HomeTopButton";
 import Community from "../components/Community";
 import Rentals from "../components/Rentals";
 import FooterButton from "../components/FooterButton";
-import Map from "../components/map";
+import Map from "../components/Map";
 import Message from "../components/Message";
 import Account from "../components/Account";
 
@@ -41,13 +41,16 @@ export default function HomeScreen() {
                     <HomeTopButton activeButton={activeButton} setActiveButton={setActiveButton} />)
                 }
 
-                <ScrollView>
-                    {activeButton === 'community' && <Community />}
-                    {activeButton === 'rentals' && <Rentals />}
-                    {activeButton === 'map' && <Map />}
-                    {activeButton === 'message' && <Message />}
-                    {activeButton === 'account' && <Account />}
-                </ScrollView>
+                {activeButton === 'map' ? (
+                    <Map />
+                ) : (
+                    <ScrollView>
+                        {activeButton === 'community' && <Community />}
+                        {activeButton === 'rentals' && <Rentals />}
+                        {activeButton === 'message' && <Message />}
+                        {activeButton === 'account' && <Account />}
+                    </ScrollView>
+                )}
 
             </View>
 
