@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
-import MapView from "react-native-maps";
-import { useState } from "react";
+import MapView, { Marker } from "react-native-maps";
+import { useEffect, useRef, useState } from "react";
+import * as Location from 'expo-location'; // Import the Location module
 
 import places from "../../assets/map/place.json";
 import CustomMarker from "./CustomMarker";
@@ -11,6 +12,35 @@ import Places from "./Places";
 export default function Map() {
 
     const [selectedApartment, setSelectedApartment] = useState<{ id: number; latitude: number; longitude: number; price: number; title: string; numberOfStars: number; rating: number; image: string; } | null>(null);
+    const [currentLocation, setCurrentLocation] = useState<Location.LocationObjectCoords | null>(null);
+    const mapRef = useRef<MapView>(null); // Create a ref for MapView
+
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert(
+                    "Permission Denied",
+                    "Permission to access location was denied. Please enable location services in your device settings.",
+                    [{ text: "OK" }]
+                );
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setCurrentLocation(location.coords);
+
+            // Center the map on the current location
+            if (mapRef.current && location.coords) {
+                mapRef.current.animateToRegion({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421
+                }, 1000);
+            }
+        })();
+    }, []);
 
     return (
         <View style={styles.page}>
@@ -19,27 +49,34 @@ export default function Map() {
 
             <View>
                 <MapView
-                    // provider={PROVIDER_GOOGLE}
+                    ref={mapRef} // Attach the ref to MapView
                     style={styles.map}
                     initialRegion={{
-                        latitude: 37.78825,
-                        longitude: -122.4324,
+                        latitude: currentLocation ? currentLocation.latitude : 37.78825,
+                        longitude: currentLocation ? currentLocation.longitude : -122.4324,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421
                     }}
                 >
-                    {places.map((places) => (
+                    {places.map((place) => (
                         <CustomMarker
-                            key={places.id}
-                            places={places}
-                            onPress={() => setSelectedApartment(places)}
+                            key={place.id}
+                            places={place}
+                            onPress={() => setSelectedApartment(place)}
                         />
                     ))}
+
+                    {currentLocation && (
+                        <Marker
+                            coordinate={{ latitude: currentLocation.latitude, longitude: currentLocation.longitude }}
+                            title="You are here"
+                            pinColor="blue"
+                        />
+                    )}
                 </MapView>
 
                 {selectedApartment && <Places place={selectedApartment} />}
             </View>
-
         </View>
     );
 }
@@ -50,11 +87,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
     },
-    pageContent: {
-        // padding: 2,
-        // flex: 1,
-    },
-
     map: {
         width: '100%',
         height: '100%',
