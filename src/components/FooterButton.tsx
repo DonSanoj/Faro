@@ -24,7 +24,7 @@ export default function FooterButton({ activeFooterBtn, setActiveFooterBtn }: { 
 
             <Pressable style={{ alignItems: 'center', justifyContent: 'center' }} onPress={() => setActiveFooterBtn('Message')}>
                 <MaterialCommunityIcons name="message-text" size={24} color={activeFooterBtn === 'Message' ? "#fff" : "#B4B4B8"} />
-                <Text style={[styles.footerText, activeFooterBtn === 'Message' && styles.activeText]}>Message</Text>
+                <Text style={[styles.footerText, activeFooterBtn === 'Message' && styles.activeText]}>Chats</Text>
             </Pressable>
 
             <Pressable style={{ alignItems: 'center', justifyContent: 'center' }} onPress={() => setActiveFooterBtn('Account')}>

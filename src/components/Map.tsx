@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Alert } from "react-native";
+import { StyleSheet, Text, View, Alert, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
@@ -8,6 +8,7 @@ import * as Location from 'expo-location'; // Import the Location module
 import places from "../../assets/map/place.json";
 import CustomMarker from "./CustomMarker";
 import Places from "./Places";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function Map() {
 
@@ -42,6 +43,28 @@ export default function Map() {
         })();
     }, []);
 
+    const handleRecenter = async () => {
+        if (currentLocation && mapRef.current) {
+
+            mapRef.current.animateToRegion({
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+            }, 1000);
+        } else {
+
+            let location = await Location.getCurrentPositionAsync({});
+            setCurrentLocation(location.coords);
+            mapRef.current?.animateToRegion({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+            }, 1000);
+        }
+    };
+
     return (
         <View style={styles.page}>
             <StatusBar style="light" />
@@ -75,6 +98,10 @@ export default function Map() {
                     )}
                 </MapView>
 
+                <TouchableOpacity style={styles.recenterButton} onPress={handleRecenter}>
+                    <FontAwesome5 name="location-arrow" size={28} color="white" />
+                </TouchableOpacity>
+
                 {selectedApartment && <Places place={selectedApartment} />}
             </View>
         </View>
@@ -90,5 +117,22 @@ const styles = StyleSheet.create({
     map: {
         width: '100%',
         height: '100%',
-    }
+    },
+
+    recenterButton: {
+        position: 'absolute',
+        bottom: 20,
+        right: 20,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        padding: 10,
+        borderRadius: 50,
+        borderWidth: 3,
+        borderColor: 'black',
+        zIndex: 1,
+        width: 60,
+        height: 60,
+
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });
